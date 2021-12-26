@@ -1,0 +1,4 @@
+requests
+opencv
+numpy
+pillow
