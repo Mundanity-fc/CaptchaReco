@@ -1,4 +1,6 @@
 requests
-opencv
 numpy
 pillow
+pyyaml
+keras == 2.2.5
+tensorflow == 1.14
