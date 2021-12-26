@@ -1,0 +1,16 @@
+dataset:
+  train_dir: data/train/
+  test_dir: data/test/
+  char_length: 4
+  charset_length: 10
+  height: 22
+  width: 62
+model:
+  model_dir: model/
+  model_format: .h5
+  history_dir: model/history/
+  history_format: .history
+  optimizer: adam
+  loss: binary_crossentropy
+  batch: 20
+  epochs: 10
