@@ -38,7 +38,7 @@ class ImageProcess(object):
                 else:
                     # 通过反复尝试，阈值为110-140时对于目前的验证码效果最好
                     # 105±5的范围内为最优情况，过小会丢失图像，过大会保留干扰图像
-                    if image_pixel_matrix[w, h] < 105:
+                    if image_pixel_matrix[w, h] < 103:
                         image_pixel_matrix[w, h] = 0
                     else:
                         image_pixel_matrix[w, h] = 255
