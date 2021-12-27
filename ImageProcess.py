@@ -15,6 +15,7 @@ class ImageProcess(object):
 
     def byte2jpeg(self, byte_content):
         """
+        将request包获取的二进制图像格式转换成Pillow可以读取的格式
         :param byte_content: Byte类型的图片数据
         :return: Pillow可以读取的jpeg图片格式
         """""
@@ -50,6 +51,7 @@ class ImageProcess(object):
 
     def process(self, source):
         """
+        直接对Request返回的二进制图片格式进行二值化处理
         :param source: Requests返回的二进制格式图片
         :return: 二值化处理后的JPEG格式图片
         """""
