@@ -26,7 +26,6 @@ class ModelClass:
         # 获取yaml配置文件
         config_file = open(r'config/configs.yaml', 'r', encoding='utf-8')
         config_content = config_file.read()
-
         self.config = yaml.load(config_content, Loader=yaml.FullLoader)
         # 定义标签
         self.charset = ['1', '2', '3', 'b', 'c', 'm', 'n', 'v', 'x', 'z']
@@ -75,7 +74,6 @@ class ModelClass:
         string = ""
         string = string + char1 + char2 + char3 + char4
         return string
-
 
     def init_train_data(self):
         """
@@ -175,11 +173,11 @@ class ModelClass:
         # 定义模型文件名与记录文件名
         filename_str = '{}new_trained_{}_{}_bs_{}_epochs_{}{}'
         current_model_file = filename_str.format(self.config['model']['model_dir'],
-                                         self.config['model']['optimizer'],
-                                         self.config['model']['loss'],
-                                         self.config['model']['batch'],
-                                         self.config['model']['epochs'],
-                                         self.config['model']['model_format'])
+                                                 self.config['model']['optimizer'],
+                                                 self.config['model']['loss'],
+                                                 self.config['model']['batch'],
+                                                 self.config['model']['epochs'],
+                                                 self.config['model']['model_format'])
         history_file = filename_str.format(self.config['model']['history_dir'],
                                            self.config['model']['optimizer'],
                                            self.config['model']['loss'],
@@ -211,11 +209,11 @@ class ModelClass:
         """""
         filename_str = '{}new_trained_{}_{}_bs_{}_epochs_{}{}'
         model = load_model(filename_str.format(self.config['model']['model_dir'],
-                                         self.config['model']['optimizer'],
-                                         self.config['model']['loss'],
-                                         self.config['model']['batch'],
-                                         self.config['model']['epochs'],
-                                         self.config['model']['model_format']))
+                                               self.config['model']['optimizer'],
+                                               self.config['model']['loss'],
+                                               self.config['model']['batch'],
+                                               self.config['model']['epochs'],
+                                               self.config['model']['model_format']))
         data = []
         img = Image.open('verifycode.jpg')
         process = ImageProcess()
@@ -228,7 +226,6 @@ class ModelClass:
         result = self.to_string(predict.tolist())
         return result
 
-
     def predict(self, input):
         """
         预测一个二值化处理后的图片
@@ -238,15 +235,15 @@ class ModelClass:
         """""
         filename_str = '{}new_trained_{}_{}_bs_{}_epochs_{}{}'
         model = load_model(filename_str.format(self.config['model']['model_dir'],
-                                         self.config['model']['optimizer'],
-                                         self.config['model']['loss'],
-                                         self.config['model']['batch'],
-                                         self.config['model']['epochs'],
-                                         self.config['model']['model_format']))
-        data = []
-        data.append(numpy.array(input))
+                                               self.config['model']['optimizer'],
+                                               self.config['model']['loss'],
+                                               self.config['model']['batch'],
+                                               self.config['model']['epochs'],
+                                               self.config['model']['model_format']))
+        data = [numpy.array(input)]
         data = numpy.array(data, dtype=numpy.float32)
         data = data / 255
         data = data.reshape(data.shape[0], self.config['dataset']['height'], self.config['dataset']['width'], 1)
         predict = model.predict(data)
-        return predict
+        result = self.to_string(predict.tolist())
+        return result
