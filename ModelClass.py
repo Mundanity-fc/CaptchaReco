@@ -8,7 +8,6 @@ from keras.utils.vis_utils import plot_model
 from keras.models import *
 from keras.layers import *
 import pickle
-import matplotlib.pyplot as plt
 from ImageProcess import ImageProcess
 
 
@@ -191,15 +190,6 @@ class ModelClass:
         with open(history_file, 'wb') as f:
             pickle.dump(history.history, f)
         print('已将模型记录保存到：%s ' % history_file)
-
-        # 绘图
-        plt.plot(history.history['accuracy'])
-        plt.plot(history.history['val_accuracy'])
-        plt.title("model accuracy")
-        plt.ylabel("Accuracy")
-        plt.xlabel("epoch")
-        plt.legend(["train", "test"], loc="lower right")
-        plt.show()
 
     def predict_validation(self):
         """
