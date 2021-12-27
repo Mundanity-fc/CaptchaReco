@@ -12,6 +12,8 @@ class ScheduleClass:
         self.password = self.config['password']
         self.get_login_cookie()
         self.cookie = ""
+        self.rank = []
+        self.schedule = []
 
     def get_login_cookie(self):
         # 初次发送GET请求
@@ -38,3 +40,35 @@ class ScheduleClass:
         cookie_pair = login.history[1].headers.get('Set-Cookie')[11:43]
         self.cookie = {'JSESSIONID': cookie_pair}
         return self.cookie
+
+    def get_rank(self):
+        kksj = ''
+        kcxz = ''
+        kcmc = ''
+        xsfs = 'all'
+        # 根据页面的元素发送post请求
+        # kksj：开课时间，kcxz：课程性质，kcmc：课程名称，xsfs：显示方式
+        # 具体参数类型参照教务处html元素
+        rank_data = {'kksj': kksj, 'kcxz': kcxz, 'kcmc': kcmc, 'xsfs': xsfs}
+        # 发送post请求
+        get_rank = requests.get('http://202.119.81.112:9080/njlgdx/kscj/cjcx_list', data=rank_data, cookies=self.cookie)
+        get_rank.encoding = 'utf-8'
+        html = get_rank.text
+
+        # 获取表格内容
+        table = re.findall(r'<table(.*?)</table>', html, re.S)
+        rank_list = re.findall(r'<tr>(.*?)</tr>', table[1], re.S)
+        # 移除表头内容
+        rank_list.pop(0)
+        # 返回的数据集
+        data = []
+        # 截取每行内容
+        for i in range(len(rank_list)):
+            data.append(re.findall(r'<td(.*?)</td>', rank_list[i], re.S))
+        # 删除内容的css样式残余
+        for i in range(len(data)):
+            for j in range(len(data[i])):
+                str_list = data[i][j].split('>')
+                data[i][j] = str_list[1]
+        self.rank = data
+        return self.rank
