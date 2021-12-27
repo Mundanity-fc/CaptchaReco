@@ -7,6 +7,10 @@ class ImageProcess(object):
     图片处理类
     将Requests中获取到的二进制图片转换为Pillow可以读取的JPEG图片格式
     并对图像进行二值化处理
+    可使用的成员函数
+    byte2jpeg(byte)——将二进制格式图片byte转化为Pillow可读取格式
+    image_binarize(image)——将Pillow格式图片image进行二值化
+    process(source)——将request返回的二进制图片格式进行二值化
     """""
 
     def byte2jpeg(self, byte_content):
