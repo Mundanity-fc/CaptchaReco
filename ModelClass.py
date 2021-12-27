@@ -9,13 +9,24 @@ from keras.models import *
 from keras.layers import *
 import pickle
 import matplotlib.pyplot as plt
+from ImageProcess import ImageProcess
 
 
 class ModelClass:
+    """
+    模型调用类
+    可使用的成员函数有：
+    start_train()——进行模型的训练
+    predict()——进行一个图片的预测
+    predict_validation()——预测根目录下verifycode.jpg的标签
+    predict(image)——预测传入的二值化图片image的标签
+    """""
+
     def __init__(self):
         # 获取yaml配置文件
         config_file = open(r'config/configs.yaml', 'r', encoding='utf-8')
         config_content = config_file.read()
+
         self.config = yaml.load(config_content, Loader=yaml.FullLoader)
         # 定义标签
         self.charset = ['1', '2', '3', 'b', 'c', 'm', 'n', 'v', 'x', 'z']
@@ -37,6 +48,34 @@ class ModelClass:
             # 标签的长度出错时终止程序
             sys.exit("数据集标签出现问题！！！")
         return matrix
+
+    def get_max(self, matrix):
+        """
+        获取一个矩阵的最大值位置
+        :param matrix: 待检测矩阵
+        :return: 最大值的位置
+        """""
+        max = 0
+        max_id = 0
+        for i in range(len(matrix)):
+            if matrix[i] >= max:
+                max = matrix[i]
+                max_id = i
+        return max_id
+
+    def to_string(self, matrix):
+        matrix1 = matrix[0][0:9]
+        matrix2 = matrix[0][10:19]
+        matrix3 = matrix[0][20:29]
+        matrix4 = matrix[0][30:39]
+        char1 = self.charset[self.get_max(matrix1)]
+        char2 = self.charset[self.get_max(matrix2)]
+        char3 = self.charset[self.get_max(matrix3)]
+        char4 = self.charset[self.get_max(matrix4)]
+        string = ""
+        string = string + char1 + char2 + char3 + char4
+        return string
+
 
     def init_train_data(self):
         """
@@ -84,7 +123,12 @@ class ModelClass:
         y_test = numpy.asarray(y_test)
         return x_test, y_test
 
-    def run(self):
+    def start_train(self):
+        """
+        进行模型的训练
+        数据集、模型保存位置等变量定义于configs.yaml中
+        :return: 无返回值
+        """""
         # 获取训练集与验证集
         x_train, y_train = self.init_train_data()
         x_test, y_test = self.init_test_data()
@@ -120,7 +164,7 @@ class ModelClass:
         # 控制台输出模型的摘要
         print(model.summary())
         # 到处模型的结构
-        plot_model(model, to_file='model.jpg', show_shapes=True)
+        plot_model(model, to_file='asset/model_structure.jpg', show_shapes=True)
         # 开始训练模型
         history = model.fit(x_train,
                             y_train,
@@ -128,6 +172,7 @@ class ModelClass:
                             epochs=self.config['model']['epochs'],
                             verbose=2,
                             validation_data=(x_test, y_test))
+        # 定义模型文件名与记录文件名
         filename_str = '{}new_trained_{}_{}_bs_{}_epochs_{}{}'
         current_model_file = filename_str.format(self.config['model']['model_dir'],
                                          self.config['model']['optimizer'],
@@ -157,3 +202,51 @@ class ModelClass:
         plt.xlabel("epoch")
         plt.legend(["train", "test"], loc="lower right")
         plt.show()
+
+    def predict_validation(self):
+        """
+        对根目录下的verifycode.jpg进行预测
+        从而判断模型
+        :return: 预测的结果
+        """""
+        filename_str = '{}new_trained_{}_{}_bs_{}_epochs_{}{}'
+        model = load_model(filename_str.format(self.config['model']['model_dir'],
+                                         self.config['model']['optimizer'],
+                                         self.config['model']['loss'],
+                                         self.config['model']['batch'],
+                                         self.config['model']['epochs'],
+                                         self.config['model']['model_format']))
+        data = []
+        img = Image.open('verifycode.jpg')
+        process = ImageProcess()
+        img = process.image_binarize(img)
+        data.append(numpy.array(img))
+        data = numpy.array(data, dtype=numpy.float32)
+        data = data / 255
+        data = data.reshape(data.shape[0], self.config['dataset']['height'], self.config['dataset']['width'], 1)
+        predict = model.predict(data)
+        result = self.to_string(predict.tolist())
+        return result
+
+
+    def predict(self, input):
+        """
+        预测一个二值化处理后的图片
+        返回其预测的结果
+        :param input: 二值化处理后的图片 
+        :return: 预测的标签结果
+        """""
+        filename_str = '{}new_trained_{}_{}_bs_{}_epochs_{}{}'
+        model = load_model(filename_str.format(self.config['model']['model_dir'],
+                                         self.config['model']['optimizer'],
+                                         self.config['model']['loss'],
+                                         self.config['model']['batch'],
+                                         self.config['model']['epochs'],
+                                         self.config['model']['model_format']))
+        data = []
+        data.append(numpy.array(input))
+        data = numpy.array(data, dtype=numpy.float32)
+        data = data / 255
+        data = data.reshape(data.shape[0], self.config['dataset']['height'], self.config['dataset']['width'], 1)
+        predict = model.predict(data)
+        return predict
