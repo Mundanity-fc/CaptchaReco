@@ -1,3 +1,4 @@
+import sys
 import requests
 import re
 import yaml
@@ -15,6 +16,7 @@ class ScheduleClass:
         self.cookie = ""
         self.rank = []
         self.schedule = []
+        self.success = 0
 
     # 获取第一次cookie（匹配验证码提交cookie）
     def get_login_cookie(self) -> dict:
@@ -40,11 +42,11 @@ class ScheduleClass:
         return image.content
 
     # 获取第二次cookie（教务系统页面cookie）
-    def login(self, verifycode) -> dict:
+    def login(self, verifycode):
         """
         通过提交登录表单获取访问时所用的cookie
         :param verifycode: 验证码的内容
-        :return: cookie
+        :return: 无返回值
         """""
         # 合成登录表单
         useDogeCode = ""
@@ -54,9 +56,12 @@ class ScheduleClass:
         login = requests.post("http://202.119.81.113:8080/Logon.do?method=logon", data=login_form,
                               cookies=self.login_cookie)
         # 获取新的cookie
-        cookie_pair = login.history[1].headers.get('Set-Cookie')[11:43]
-        self.cookie = {'JSESSIONID': cookie_pair}
-        return self.cookie
+        if(len(login.history) <= 1):
+            self.success = 0
+        else:
+            self.success = 1
+            cookie_pair = login.history[1].headers.get('Set-Cookie')[11:43]
+            self.cookie = {'JSESSIONID': cookie_pair}
 
     # 成绩查询
     def get_rank(self) -> list:
@@ -64,33 +69,39 @@ class ScheduleClass:
         获取所有成绩列表
         :return: 成绩列表 
         """""
-        kksj = ''
-        kcxz = ''
-        kcmc = ''
-        xsfs = 'all'
-        # 根据页面的元素发送post请求
-        # kksj：开课时间，kcxz：课程性质，kcmc：课程名称，xsfs：显示方式
-        # 具体参数类型参照教务处html元素
-        rank_data = {'kksj': kksj, 'kcxz': kcxz, 'kcmc': kcmc, 'xsfs': xsfs}
-        # 发送post请求
-        get_rank = requests.get('http://202.119.81.112:9080/njlgdx/kscj/cjcx_list', data=rank_data, cookies=self.cookie)
-        get_rank.encoding = 'utf-8'
-        html = get_rank.text
+        # 判断是否成功登录
+        if self.success == 1:
+            kksj = ''
+            kcxz = ''
+            kcmc = ''
+            xsfs = 'all'
+            # 根据页面的元素发送post请求
+            # kksj：开课时间，kcxz：课程性质，kcmc：课程名称，xsfs：显示方式
+            # 具体参数类型参照教务处html元素
+            rank_data = {'kksj': kksj, 'kcxz': kcxz, 'kcmc': kcmc, 'xsfs': xsfs}
+            # 发送post请求
+            get_rank = requests.get('http://202.119.81.112:9080/njlgdx/kscj/cjcx_list', data=rank_data, cookies=self.cookie)
+            get_rank.encoding = 'utf-8'
+            html = get_rank.text
 
-        # 获取表格内容
-        table = re.findall(r'<table(.*?)</table>', html, re.S)
-        rank_list = re.findall(r'<tr>(.*?)</tr>', table[1], re.S)
-        # 移除表头内容
-        rank_list.pop(0)
-        # 返回的数据集
-        data = []
-        # 截取每行内容
-        for i in range(len(rank_list)):
-            data.append(re.findall(r'<td(.*?)</td>', rank_list[i], re.S))
-        # 删除内容的css样式残余
-        for i in range(len(data)):
-            for j in range(len(data[i])):
-                str_list = data[i][j].split('>')
-                data[i][j] = str_list[1]
-        self.rank = data
-        return self.rank
+            # 获取表格内容
+            table = re.findall(r'<table(.*?)</table>', html, re.S)
+            rank_list = re.findall(r'<tr>(.*?)</tr>', table[1], re.S)
+            # 移除表头内容
+            rank_list.pop(0)
+            # 返回的数据集
+            data = []
+            # 截取每行内容
+            for i in range(len(rank_list)):
+                data.append(re.findall(r'<td(.*?)</td>', rank_list[i], re.S))
+            # 删除内容的css样式残余
+            for i in range(len(data)):
+                for j in range(len(data[i])):
+                    str_list = data[i][j].split('>')
+                    data[i][j] = str_list[1]
+            self.rank = data
+            return self.rank
+        else:
+            # 登录失败时的提示
+            result = ['请重试']
+            return result

@@ -104,7 +104,10 @@ class Panel(tkinter.Tk):
         # 完成登录操作
         self.Schedule.login(self.verifycode)
         ranklist = self.Schedule.get_rank()
-        last = ranklist.pop()
-        tkinter.messagebox.showinfo('最新科目成绩！！', '最新科目为：%s\n成绩为：%s'%(last[3], last[4]))
-        print(ranklist)
-
+        # 判断是否获取到成绩
+        if len(ranklist) > 1:
+            last = ranklist.pop()
+            tkinter.messagebox.showinfo('最新科目成绩！！', '最新科目为：%s\n成绩为：%s'%(last[3], last[4]))
+        else:
+            # 未获取到成绩时弹窗提示
+            tkinter.messagebox.showinfo('出错了', ranklist[0])
