@@ -23,3 +23,33 @@
 > process——直接将request返回的二进制图像转换成Pillow格式并进行二值化处理
 
 #### ModelClass类
+
+ModelClass类中包含了8个类成员函数。
+
+to_matrix——将标签转换为矩阵
+
+get_max——获取矩阵中最大值
+
+to_string——将矩阵转换为标签
+
+init_train_data——加载训练集
+
+init_test_data——加载测试集
+
+start_train——模型训练
+
+predict_validation——以本地文件预测
+
+predict——以指定输入预测
+
+### Panel类
+
+Panel类为GUI界面类。其中定义了图形界面的功能调用与布局设计。
+
+### ScheduleClass类
+
+ScheduleClass类为与教务处网站的HTTP通信类。其中代码由[先前的项目](https://github.com/Mundanity-fc/NJUST_Toolkit)改写而来。
+
+### 附加内容
+
+Plugin文件夹内包含了部署在树莓派上的QQ机器人插件以及模型的调用代码，适用于Nonebot。
