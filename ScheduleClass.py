@@ -17,7 +17,11 @@ class ScheduleClass:
         self.schedule = []
 
     # 获取第一次cookie（匹配验证码提交cookie）
-    def get_login_cookie(self):
+    def get_login_cookie(self) -> dict:
+        """
+        获取登录时所需要的cookie
+        :return: cookie
+        """""
         # 初次发送GET请求
         first_request = requests.get("http://202.119.81.113:8080/")
         # 获取访问的cookie
@@ -26,13 +30,22 @@ class ScheduleClass:
         return self.login_cookie
 
     # 获取新的验证码
-    def get_verify_code(self):
+    def get_verify_code(self) -> requests.Response.content:
+        """
+        通过登录时的cookie获取验证码图片
+        :return: 验证码图片
+        """""
         # 以获取的cookie获取新的验证码
         image = requests.get("http://202.119.81.113:8080/verifycode.servlet", cookies=self.login_cookie)
         return image.content
 
     # 获取第二次cookie（教务系统页面cookie）
-    def login(self, verifycode):
+    def login(self, verifycode) -> dict:
+        """
+        通过提交登录表单获取访问时所用的cookie
+        :param verifycode: 验证码的内容
+        :return: cookie
+        """""
         # 合成登录表单
         useDogeCode = ""
         login_form = {'USERNAME': self.username, 'PASSWORD': self.password, 'useDogeCode': useDogeCode,
@@ -46,7 +59,11 @@ class ScheduleClass:
         return self.cookie
 
     # 成绩查询
-    def get_rank(self):
+    def get_rank(self) -> list:
+        """
+        获取所有成绩列表
+        :return: 成绩列表 
+        """""
         kksj = ''
         kcxz = ''
         kcmc = ''

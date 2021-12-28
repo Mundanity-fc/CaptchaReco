@@ -22,6 +22,10 @@ class Panel(tkinter.Tk):
         self.verifycode = ""
 
     def layout(self):
+        """
+        进行GUI的布局设计
+        :return: 无返回值
+        """""
         # 样例验证码预测结果文本框
         self.result_display = tk.Entry(self)
         self.result_display.place(x=100, y=140)
@@ -46,16 +50,29 @@ class Panel(tkinter.Tk):
 
     # 开始进行模型训练
     def do_train(self):
+        """
+        调用模型训练函数
+        :return: 无返回值
+        """""
         self.CNN.start_train()
 
     # 进行本地文件的预测并输出其结果至文本框
     def do_predict(self):
+        """
+        调用模型识别本地图片内容，结果输出到第一个文本框
+        :return: 无返回值
+        """""
         result = self.CNN.predict_validation()
         self.result_display.delete(0, tk.END)
         self.result_display.insert(0, '识别结果：' + result)
 
     # 获取教务处的验证码并原图片和处理后的图片
     def place_verifycode(self):
+        """
+        获取教务处的验证码并进行处理
+        将原图片和处理后的图片显示于按钮下方
+        :return: 无返回值
+        """""
         byte_image = self.Schedule.get_verify_code()
         self.new_pilImage1 = self.Img.byte2jpeg(byte_image)
         self.new_tkImage1 = ImageTk.PhotoImage(image=self.new_pilImage1)
@@ -68,6 +85,10 @@ class Panel(tkinter.Tk):
 
     # 识别获取到的验证码
     def predict_distance_verifycode(self):
+        """
+        识别获取到的验证码的内容
+        :return: 无返回值
+        """""
         result = self.CNN.predict(self.new_pilImage2)
         print(result)
         self.verifycode_display.delete(0, tk.END)
@@ -76,6 +97,10 @@ class Panel(tkinter.Tk):
 
     # 弹框输出最新的成绩
     def print_rank(self):
+        """
+        以弹窗形式显示最新的成绩结果
+        :return: 无返回值
+        """""
         # 完成登录操作
         self.Schedule.login(self.verifycode)
         ranklist = self.Schedule.get_rank()

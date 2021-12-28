@@ -1,4 +1,6 @@
 import sys
+from typing import Tuple, Any
+
 import numpy as np
 import yaml
 import os
@@ -8,6 +10,9 @@ from keras.utils.vis_utils import plot_model
 from keras.models import *
 from keras.layers import *
 import pickle
+
+from numpy import ndarray
+
 from ImageProcess import ImageProcess
 
 
@@ -29,7 +34,7 @@ class ModelClass:
         # 定义标签
         self.charset = ['1', '2', '3', 'b', 'c', 'm', 'n', 'v', 'x', 'z']
 
-    def to_matrix(self, string):
+    def to_matrix(self, string) -> numpy.ndarray:
         """
         将某个数据的标签名称转化为对应的np矩阵作为训练时的标签值
         :param string: 数据的标签名称
@@ -47,7 +52,7 @@ class ModelClass:
             sys.exit("数据集标签出现问题！！！")
         return matrix
 
-    def get_max(self, matrix):
+    def get_max(self, matrix) -> int:
         """
         获取一个矩阵的最大值位置
         :param matrix: 待检测矩阵
@@ -61,7 +66,7 @@ class ModelClass:
                 max_id = i
         return max_id
 
-    def to_string(self, matrix):
+    def to_string(self, matrix) -> str:
         matrix1 = matrix[0][0:9]
         matrix2 = matrix[0][10:19]
         matrix3 = matrix[0][20:29]
@@ -74,7 +79,7 @@ class ModelClass:
         string = string + char1 + char2 + char3 + char4
         return string
 
-    def init_train_data(self):
+    def init_train_data(self) -> Tuple[ndarray, ndarray]:
         """
         初始化训练集
         :return: x_train—数据集 y_train-标签集
@@ -98,7 +103,7 @@ class ModelClass:
         y_train = numpy.asarray(y_train)
         return x_train, y_train
 
-    def init_test_data(self):
+    def init_test_data(self) -> Tuple[ndarray, ndarray]:
         """
         初始化验证集
         :return: x_test—数据集 y_test-标签集
@@ -191,7 +196,7 @@ class ModelClass:
             pickle.dump(history.history, f)
         print('已将模型记录保存到：%s ' % history_file)
 
-    def predict_validation(self):
+    def predict_validation(self) -> str:
         """
         对根目录下的verifycode.jpg进行预测
         从而判断模型
@@ -216,7 +221,7 @@ class ModelClass:
         result = self.to_string(predict.tolist())
         return result
 
-    def predict(self, input):
+    def predict(self, input) -> str:
         """
         预测一个二值化处理后的图片
         返回其预测的结果

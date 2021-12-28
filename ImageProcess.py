@@ -13,7 +13,7 @@ class ImageProcess(object):
     process(source)——将request返回的二进制图片格式进行二值化
     """""
 
-    def byte2jpeg(self, byte_content):
+    def byte2jpeg(self, byte_content) -> Image:
         """
         将request包获取的二进制图像格式转换成Pillow可以读取的格式
         :param byte_content: Byte类型的图片数据
@@ -21,7 +21,7 @@ class ImageProcess(object):
         """""
         return Image.open(BytesIO(byte_content))
 
-    def image_binarize(self, image):
+    def image_binarize(self, image) -> Image:
         """
         将验证码图像进行二值化处理
         :param image: 原始图像
@@ -49,7 +49,7 @@ class ImageProcess(object):
                         image_pixel_matrix[w, h] = 255
         return image
 
-    def process(self, source):
+    def process(self, source) -> Image:
         """
         直接对Request返回的二进制图片格式进行二值化处理
         :param source: Requests返回的二进制格式图片
