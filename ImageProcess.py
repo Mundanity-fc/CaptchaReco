@@ -39,7 +39,7 @@ class ImageProcess(object):
             for w in range(width):
                 # 消除首尾行列的黑框
                 if h == 0 or h == 21 or w == 0 or w == 61:
-                    image_pixel_matrix[w, h] = 255
+                    image_pixel_matrix[w, h] = 0
                 else:
                     # 通过反复尝试，阈值为110-140时对于目前的验证码效果最好
                     # 105±5的范围内为最优情况，过小会丢失图像，过大会保留干扰图像

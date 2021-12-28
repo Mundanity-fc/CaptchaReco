@@ -165,7 +165,7 @@ class ModelClass:
                       metrics=['accuracy'])
         # 控制台输出模型的摘要
         print(model.summary())
-        # 到处模型的结构
+        # 导出模型的结构
         plot_model(model, to_file='asset/model_structure.jpg', show_shapes=True)
         # 开始训练模型
         history = model.fit(x_train,
