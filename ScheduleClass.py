@@ -5,6 +5,7 @@ import yaml
 
 class ScheduleClass:
     def __init__(self):
+        # 获取学号及密码
         config_file = open(r'config/account.yaml', 'r', encoding='utf-8')
         config_content = config_file.read()
         self.config = yaml.load(config_content, Loader=yaml.FullLoader)
@@ -15,6 +16,7 @@ class ScheduleClass:
         self.rank = []
         self.schedule = []
 
+    # 获取第一次cookie（匹配验证码提交cookie）
     def get_login_cookie(self):
         # 初次发送GET请求
         first_request = requests.get("http://202.119.81.113:8080/")
@@ -23,11 +25,13 @@ class ScheduleClass:
         self.login_cookie = {'JSESSIONID': self.login_cookie}
         return self.login_cookie
 
+    # 获取新的验证码
     def get_verify_code(self):
         # 以获取的cookie获取新的验证码
         image = requests.get("http://202.119.81.113:8080/verifycode.servlet", cookies=self.login_cookie)
         return image.content
 
+    # 获取第二次cookie（教务系统页面cookie）
     def login(self, verifycode):
         # 合成登录表单
         useDogeCode = ""
@@ -41,6 +45,7 @@ class ScheduleClass:
         self.cookie = {'JSESSIONID': cookie_pair}
         return self.cookie
 
+    # 成绩查询
     def get_rank(self):
         kksj = ''
         kcxz = ''
