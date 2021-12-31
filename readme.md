@@ -26,21 +26,21 @@
 
 ModelClass类中包含了8个类成员函数。
 
-to_matrix——将标签转换为矩阵
-
-get_max——获取矩阵中最大值
-
-to_string——将矩阵转换为标签
-
-init_train_data——加载训练集
-
-init_test_data——加载测试集
-
-start_train——模型训练
-
-predict_validation——以本地文件预测
-
-predict——以指定输入预测
+> to_matrix——将标签转换为矩阵
+> 
+> get_max——获取矩阵中最大值
+> 
+> to_string——将矩阵转换为标签
+> 
+> init_train_data——加载训练集
+> 
+> init_test_data——加载测试集
+> 
+> start_train——模型训练
+> 
+> predict_validation——以本地文件预测
+> 
+> predict——以指定输入预测
 
 ### Panel类
 
